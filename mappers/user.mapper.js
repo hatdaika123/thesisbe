@@ -1,5 +1,5 @@
-const { UserDTOBuilder } = require("../../dto/user.dto");
-const { UserAuthDTOBuilder } = require("../../dto/userAuth.dto");
+const { UserDTOBuilder } = require("../dto/user.dto");
+const { UserAuthDTOBuilder } = require("../dto/userAuth.dto");
 
 function userDTOFromUser(user) {
     return new UserDTOBuilder()
