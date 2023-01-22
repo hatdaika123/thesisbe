@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema({
     username: String,
     password: String,
     email: String,
-    expence: [expenceSchema],
-    category: [categorySchema]
+    expences: [expenceSchema],
+    categories: [categorySchema]
 });
 
 const User = mongoose.model('User', userSchema);
