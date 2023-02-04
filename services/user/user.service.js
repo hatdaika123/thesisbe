@@ -6,6 +6,12 @@ const { userDTOFromUser, userAuthDTOFromUserAndToken } = require('../../mappers/
 const jwt = require('jsonwebtoken');
 const { UserDTO } = require('../../dto/user.dto')
 const { UserAuthDTO } = require('../../dto/userAuth.dto');
+const { Category } = require('../../models/category/category.model');
+const DEFAULT_CATEGORY = [
+    { name: 'Food', icon: 'e57a' },
+    { name: 'Transportation', icon: 'e530' },
+    { name: 'Education', icon: 'e80c' }
+];
 
 /**
  * 
@@ -18,6 +24,8 @@ async function addUser(form) {
 
     const user = new User(form);
     await user.save();
+
+    assignUserWithCategories(user, DEFAULT_CATEGORY);
 
     return userDTOFromUser(user);
 }
@@ -58,7 +66,7 @@ async function authenticateUser(form) {
         .compare(form.password, user.password) === false) {
         throw new ErrorDTOBuilder()
             .setStatus(HTTP_STATUS.UNAUTHORIZED)
-            .setMessage('Unauthorized')
+            .setMessage('Invalid Password')
             .build();
     }
 
@@ -80,6 +88,18 @@ function generateJwtToken(user) {
             expiresIn: process.env.JWT_TOKEN_EXPIRE_TIME
         }
     );
+}
+
+/**
+ * 
+ * @param {User} user 
+ * @param {{ name: String, icon: String}[]} categories 
+ */
+async function assignUserWithCategories(user, categories) {
+    for (let category of categories) {
+        let c = new Category({...category, userId: user._id});
+        await c.save();
+    }
 }
 
 module.exports = {

@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
-const { categorySchema } = require('../category/category.model');
-const { expenceSchema } = require('../expence/expence.model');
 
 const userSchema = new mongoose.Schema({
     username: String,
     password: String,
-    email: String,
-    expences: [expenceSchema],
-    categories: [categorySchema]
+    email: String
 });
 
 const User = mongoose.model('User', userSchema);
