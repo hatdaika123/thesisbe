@@ -8,9 +8,9 @@ const { UserDTO } = require('../../dto/user.dto')
 const { UserAuthDTO } = require('../../dto/userAuth.dto');
 const { Category } = require('../../models/category/category.model');
 const DEFAULT_CATEGORY = [
-    { name: 'Food', icon: 'e57a' },
-    { name: 'Transportation', icon: 'e530' },
-    { name: 'Education', icon: 'e80c' }
+    { name: 'Food', icon: 'e57a', description: '' },
+    { name: 'Transportation', icon: 'e530', description: '' },
+    { name: 'Education', icon: 'e80c', description: '' }
 ];
 
 /**
@@ -82,7 +82,10 @@ async function authenticateUser(form) {
  */
 function generateJwtToken(user) {
     return jwt.sign(
-        { username: user.username },
+        { 
+            username: user.username,
+            _id: user._id
+        },
         process.env.JWT_PRIVATE_KEY,
         {
             expiresIn: process.env.JWT_TOKEN_EXPIRE_TIME

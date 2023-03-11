@@ -4,8 +4,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const cors = require('cors');
 const mongoose = require('mongoose');
-const signup = require('./routes/signup');
-const login = require('./routes/login');
+const auth = require('./middlewares/authenticate.middleware');
+const signup = require('./routes/signup.route');
+const login = require('./routes/login.route');
+const category = require('./routes/category.route');
 
 /**
  * @description connect mongodb
@@ -28,6 +30,7 @@ app.use(express.json());
  */
 app.use('/signup', signup);
 app.use('/login', login);
+app.use('/category', auth, category);
 
 
 app.listen(PORT, () => console.log(`Server running on PORT: ${PORT}`));
