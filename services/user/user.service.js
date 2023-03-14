@@ -7,11 +7,7 @@ const jwt = require('jsonwebtoken');
 const { UserDTO } = require('../../dto/user.dto')
 const { UserAuthDTO } = require('../../dto/userAuth.dto');
 const { Category } = require('../../models/category/category.model');
-const DEFAULT_CATEGORY = [
-    { name: 'Food', icon: 'e57a', description: '' },
-    { name: 'Transportation', icon: 'e530', description: '' },
-    { name: 'Education', icon: 'e80c', description: '' }
-];
+const { DEFAULT_CATEGORY } = require('../../utilities/constant');
 
 /**
  * 

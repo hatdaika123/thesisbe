@@ -1,6 +1,7 @@
 const { getAllCategory, getCategoryById, saveCategory } = require('../services/category/category.service');
 const router = require('express').Router();
 const HTTP_STATUS = require('http-status');
+const { CATEGORIES } = require('../utilities/constant');
 
 router.use((req, res, next) => {
     next()
@@ -8,7 +9,7 @@ router.use((req, res, next) => {
 
 /**
  * @GET /category
- * @description list categories
+ * @description list categories by principal
  */
 router.get('/', async (req, res) => {
     const categories = await getAllCategory(req.principal);
@@ -40,6 +41,15 @@ router.post('/', async (req, res) => {
     await saveCategory(category, principal);
     res.status(HTTP_STATUS.CREATED)
         .end();
+});
+
+/**
+ * @GET /category/icons
+ * @description list all category icon
+ */
+router.get('/icon/pack', (req, res) => {
+    res.status(HTTP_STATUS.OK)
+        .json(CATEGORIES);
 });
 
 module.exports = router;

@@ -10,7 +10,7 @@ const HTTP_STATUS = require('http-status');
 async function getAllCategory(user) {
     const categories = await Category
         .find({ userId: user._id })
-        .select('name icon');
+        .select('name icon color');
     return categories;
 }
 
@@ -49,6 +49,7 @@ async function saveCategory(form, user) {
     const category = new Category({
         name: form.name,
         icon: form.icon,
+        color: form.color,
         description: form.description,
         userId: user._id
     });

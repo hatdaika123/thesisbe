@@ -4,7 +4,7 @@ const HTTP_STATUS = require('http-status');
 const config = process.env;
 
 const verifyToken = (req, res, next) => {
-    const token = req.headers['cookie'];
+    const token = req.headers['x-access-token'];
     if (!token) {
         const e = new ErrorDTOBuilder()
             .setStatus(HTTP_STATUS.FORBIDDEN)
