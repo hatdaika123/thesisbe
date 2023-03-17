@@ -10,7 +10,7 @@ const HTTP_STATUS = require('http-status');
 async function getAllCategory(user) {
     const categories = await Category
         .find({ userId: user._id })
-        .select('name icon color');
+        .select('name icon description color');
     return categories;
 }
 
@@ -31,13 +31,16 @@ async function getCategoryById(id) {
     } catch (e) {
         throwNotFoundError();
     }
+}
 
-    function throwNotFoundError() {
-        throw new ErrorDTOBuilder()
-            .setStatus(HTTP_STATUS.NOT_FOUND)
-            .setMessage('Category not found.')
-            .build();
-    }
+/**
+ * throw error
+ */
+function throwNotFoundError() {
+    throw new ErrorDTOBuilder()
+        .setStatus(HTTP_STATUS.NOT_FOUND)
+        .setMessage('Category not found.')
+        .build();
 }
 
 /**
@@ -57,8 +60,35 @@ async function saveCategory(form, user) {
     await category.save();
 }
 
+/**
+ * 
+ * @param {{ name: String, icon: String, description: String }} form
+ */
+async function updateCategory(form) {
+    try {
+        let res = await Category.updateOne(
+            { _id: form._id },
+            { $set: form }
+        );
+    
+        return res.nModified;
+    } catch (e) {
+        throwNotFoundError();
+    }
+}
+
+async function deleteCategory(id, principal) {
+    try {
+        await Category.findOneAndDelete({ _id: id, userId: principal._id });
+    } catch (e) {
+        throwNotFoundError();
+    }
+}
+
 module.exports = {
     getAllCategory,
     getCategoryById,
-    saveCategory
+    saveCategory,
+    updateCategory,
+    deleteCategory
 }

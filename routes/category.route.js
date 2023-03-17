@@ -1,4 +1,4 @@
-const { getAllCategory, getCategoryById, saveCategory } = require('../services/category/category.service');
+const { getAllCategory, getCategoryById, saveCategory, updateCategory, deleteCategory } = require('../services/category/category.service');
 const router = require('express').Router();
 const HTTP_STATUS = require('http-status');
 const { CATEGORIES } = require('../utilities/constant');
@@ -38,9 +38,36 @@ router.get('/:categoryId', async (req, res) => {
 router.post('/', async (req, res) => {
     const category = req.body;
     const principal = req.principal;
-    await saveCategory(category, principal);
-    res.status(HTTP_STATUS.CREATED)
-        .end();
+    if (category._id) {
+        try {
+            await updateCategory(category);
+            res.status(HTTP_STATUS.OK)
+                .end();
+        } catch (e) {
+            res.status(e.status)
+                .json(e);
+        }
+    } else {
+        await saveCategory(category, principal);
+        res.status(HTTP_STATUS.CREATED)
+            .end();
+    }
+});
+
+/**
+ * @DELETE /category/:categoryId
+ * @description delete category by id
+ */
+router.delete('/:categoryId', async (req, res) => {
+    const principal = req.principal;
+    try {
+        await deleteCategory(req.params.categoryId, principal);
+        res.status(HTTP_STATUS.OK)
+            .end();
+    } catch (e) {
+        res.status(e.status)
+            .json(e);
+    }
 });
 
 /**
