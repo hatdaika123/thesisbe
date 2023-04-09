@@ -1,13 +1,19 @@
-const { ErrorDTOBuilder } = require("../../dto/error.dto");
 const { Category } = require("../../models/category/category.model");
-const HTTP_STATUS = require('http-status');
+const mongoose = require('mongoose');
+const { throwNotFoundError, throwBadRequestError } = require("../../utilities/helper");
 
 /**
  * 
- * @param {{ username: String, _id: String, iat: Number, exp: Number }} user 
+ * @param {{ username: String, _id: String, iat: Number, exp: Number }} user
+ * @param { { [key: string]: any }} query
  * @returns { Category[] } categories
  */
-async function getAllCategory(user) {
+async function getCategories(user, query) {
+    if (query.id) {
+        let ids = query.id.split(',');
+        return getCategoriesByListId(ids);
+    }
+
     const categories = await Category
         .find({ userId: user._id })
         .select('name icon description color');
@@ -22,25 +28,31 @@ async function getAllCategory(user) {
 async function getCategoryById(id) {
     try {
         const category = await Category
-            .findOne({ _id: id })
+            .findById(id)
             .select('name icon description');
-        
-        if (!category) throwNotFoundError();
 
         return category;
     } catch (e) {
-        throwNotFoundError();
+        throwCategoryNotFound();
     }
 }
 
 /**
- * throw error
+ * 
+ * @param { String[] } ids 
+ * @returns { Category[] } categories
  */
-function throwNotFoundError() {
-    throw new ErrorDTOBuilder()
-        .setStatus(HTTP_STATUS.NOT_FOUND)
-        .setMessage('Category not found.')
-        .build();
+async function getCategoriesByListId(ids) {
+    const objIds = ids.map(id => mongoose.Types.ObjectId(id));
+    try {
+        const categories = await Category
+            .find({ _id: { $in: objIds } })
+            .select('name icon color');
+        
+        return categories;
+    } catch (e) {
+        throwBadRequestError();
+    }
 }
 
 /**
@@ -73,7 +85,7 @@ async function updateCategory(form) {
     
         return res.nModified;
     } catch (e) {
-        throwNotFoundError();
+        throwCategoryNotFound();
     }
 }
 
@@ -81,12 +93,16 @@ async function deleteCategory(id, principal) {
     try {
         await Category.findOneAndDelete({ _id: id, userId: principal._id });
     } catch (e) {
-        throwNotFoundError();
+        throwCategoryNotFound();
     }
 }
 
+function throwCategoryNotFound() {
+    throwNotFoundError('Category not found.');
+}
+
 module.exports = {
-    getAllCategory,
+    getCategories,
     getCategoryById,
     saveCategory,
     updateCategory,

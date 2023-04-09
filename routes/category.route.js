@@ -1,4 +1,4 @@
-const { getAllCategory, getCategoryById, saveCategory, updateCategory, deleteCategory } = require('../services/category/category.service');
+const { getCategories, getCategoryById, saveCategory, updateCategory, deleteCategory } = require('../services/category/category.service');
 const router = require('express').Router();
 const HTTP_STATUS = require('http-status');
 const { CATEGORIES } = require('../utilities/constant');
@@ -12,14 +12,14 @@ router.use((req, res, next) => {
  * @description list categories by principal
  */
 router.get('/', async (req, res) => {
-    const categories = await getAllCategory(req.principal);
+    const categories = await getCategories(req.principal, req.query);
     res.status(HTTP_STATUS.OK)
         .json(categories);
 });
 
 /**
  * @GET /category/:categoryId
- * @description get single category by Id
+ * @description get single category by id
  */
 router.get('/:categoryId', async (req, res) => {
     try {

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const HTTP_STATUS = require('http-status');
-const { upload } = require('../services/upload/upload.service');
+const { upload, generateUrlsFromFilesWithHost } = require('../services/upload/upload.service');
 
 
 router.use((req, res, next) => {
@@ -11,11 +11,10 @@ router.use((req, res, next) => {
  * @POST /upload/image
  * @description
  */
-router.post('/image', upload.single('file'), (req, res) => {
+router.post('/image', upload.array('files'), (req, res) => {
     const host = req.get('host');
-    const filename = req.file.filename;
-    const url = `${host}/preview/images/${filename}`
-    res.status(HTTP_STATUS.CREATED).json({ url });
+    const urls = generateUrlsFromFilesWithHost(req.files, host);
+    res.status(HTTP_STATUS.CREATED).json(urls);
 });
 
 module.exports = router;

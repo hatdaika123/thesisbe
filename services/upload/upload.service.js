@@ -57,7 +57,20 @@ function generateFileName(file) {
     return `${crypto.randomUUID()}.${part[1]}`;
 }
 
+/**
+ * 
+ * @param {File[]} files
+ * @param {String} host
+ * @returns {String[]} urls 
+ */
+function generateUrlsFromFilesWithHost(files, host) {
+    return files.map(file => {
+        return `${host}/preview/images/${file.filename}`
+    });
+}
+
 module.exports = {
     upload,
-    storage
+    storage,
+    generateUrlsFromFilesWithHost
 }

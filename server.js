@@ -10,6 +10,7 @@ const login = require('./routes/login.route');
 const category = require('./routes/category.route');
 const upload = require('./routes/upload.route');
 const preview = require('./routes/preview.route');
+const expense = require('./routes/expense.route');
 const { ErrorDTOBuilder } = require('./dto/error.dto');
 const multer = require('multer');
 const HTTP_STATUS = require('http-status')
@@ -33,7 +34,8 @@ app.use('/signup', signup);
 app.use('/login', login);
 app.use('/category', auth, category);
 app.use('/upload', auth, upload);
-app.use('/preview', preview)
+app.use('/preview', preview);
+app.use('/expense', auth, expense);
 
 /**
  * @description handling error
@@ -47,7 +49,12 @@ app.use((err, req, res, next) => {
         return res.status(e.status)
             .json(e);
     } else if (err) {
-        return res.send({ error: err.message });
+        const e = new ErrorDTOBuilder()
+            .setStatus(HTTP_STATUS.BAD_REQUEST)
+            .setMessage(err.message)
+            .build();
+        return res.status(e.status)
+            .json(e);
     }
 
     next();
