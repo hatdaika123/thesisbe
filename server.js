@@ -11,9 +11,10 @@ const category = require('./routes/category.route');
 const upload = require('./routes/upload.route');
 const preview = require('./routes/preview.route');
 const expense = require('./routes/expense.route');
+const statistic = require('./routes/statistic.route');
 const { ErrorDTOBuilder } = require('./dto/error.dto');
 const multer = require('multer');
-const HTTP_STATUS = require('http-status')
+const HTTP_STATUS = require('http-status');
 /**
  * @description connect mongodb
  */
@@ -36,6 +37,7 @@ app.use('/category', auth, category);
 app.use('/upload', auth, upload);
 app.use('/preview', preview);
 app.use('/expense', auth, expense);
+app.use('/statistic', auth, statistic);
 
 /**
  * @description handling error

@@ -1,4 +1,4 @@
-const { updateExpense, saveExpense, getExpenses, getExpenseById } = require('../services/expense/expense.service');
+const { updateExpense, saveExpense, getExpenses, getExpenseById, deleteExpense } = require('../services/expense/expense.service');
 
 const router = require('express').Router();
 const HTTP_STATUS = require('http-status');
@@ -19,8 +19,8 @@ router.get('/', async (req, res) => {
     res.status(HTTP_STATUS.OK)
         .json({
             data: result.data,
-            currentPage: req.query.page || 0,
-            pageSize: req.query.pageSize || 20,
+            currentPage: parseInt(req.query.page) || 0,
+            pageSize: parseInt(req.query.pageSize) || 20,
             total: result.total
         });
 });
@@ -59,6 +59,22 @@ router.post('/', async (req, res) => {
         await saveExpense(expense, principal);
         res.status(HTTP_STATUS.CREATED)
             .end();
+    }
+});
+
+/**
+ * @DELETE /expense/:expenseId
+ * @description delete expense by id
+ */
+router.delete('/:expenseId', async (req, res) => {
+    const principal = req.principal;
+    try {
+        await deleteExpense(req.params.expenseId, principal);
+        res.status(HTTP_STATUS.OK)
+            .end();
+    } catch (e) {
+        res.status(e.status)
+            .json(e);
     }
 });
 

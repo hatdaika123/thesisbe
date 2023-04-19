@@ -43,6 +43,14 @@ async function updateExpense(form) {
 async function getExpenses(user, query) {
     const page = query.page || 0;
     const pageSize = query.pageSize || 20;
+    const sort = query.sort;
+    let sortObj = {};
+    if (sort) {
+        const [field, order] = sort.split(',');
+        sortObj[field] = order === 'asc' ? 1 : -1;
+    } else {
+        sortObj = { date: -1 };
+    }
 
     const offset = page * pageSize;
     const limit = pageSize;
@@ -51,9 +59,7 @@ async function getExpenses(user, query) {
         .find({ userId: user._id })
         .select('date categoryId amount type')
         .skip(offset)
-        .sort({
-            date: -1
-        })
+        .sort(sortObj)
         .limit(limit);
     
     const total = await Expense.count()
@@ -78,6 +84,14 @@ async function getExpenseById(id) {
     }
 }
 
+async function deleteExpense(id, principal) {
+    try {
+        await Expense.findOneAndDelete({ _id: id, userId: principal._id });
+    } catch (e) {
+        throwExpenseNotFound();
+    }
+}
+
 function throwExpenseNotFound() {
     throwNotFoundError('Expense not found.');
 }
@@ -86,5 +100,6 @@ module.exports = {
     updateExpense,
     saveExpense,
     getExpenses,
-    getExpenseById
+    getExpenseById,
+    deleteExpense
 }
