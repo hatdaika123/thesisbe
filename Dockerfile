@@ -4,6 +4,8 @@ FROM node:14
 # Set the working directory in the container
 WORKDIR /app
 
+COPY ["package.json", "package-lock.json*", "./"]
+
 # Copy the application files into the working directory
 COPY . /app
 
@@ -13,4 +15,4 @@ RUN npm install
 EXPOSE 3000
 
 # Define the entry point for the container
-CMD ["npm start"]
+CMD ["npm", "start"]
