@@ -8,6 +8,7 @@ const { UserDTO } = require('../../dto/user.dto')
 const { UserAuthDTO } = require('../../dto/userAuth.dto');
 const { Category } = require('../../models/category/category.model');
 const { DEFAULT_CATEGORY } = require('../../utilities/constant');
+const config = process.env;
 
 /**
  * 
@@ -101,7 +102,32 @@ async function assignUserWithCategories(user, categories) {
     }
 }
 
+/**
+ * 
+ * @param { string } token
+ * @throws { Error } if token invalid 
+ */
+function verifyToken(token) {
+    if (!token) {
+        throw new ErrorDTOBuilder()
+            .setStatus(HTTP_STATUS.FORBIDDEN)
+            .setMessage('Token required.')
+            .build();
+    }
+
+    try {
+        jwt.verify(token, config.JWT_PRIVATE_KEY);
+        return;
+    } catch (err) {
+        throw e = new ErrorDTOBuilder()
+            .setStatus(HTTP_STATUS.UNAUTHORIZED)
+            .setMessage('Invalid token.')
+            .build();
+    }
+}
+
 module.exports = {
     registerUser,
-    authenticateUser
+    authenticateUser,
+    verifyToken
 }

@@ -17,4 +17,14 @@ router.get('/summary', async (req, res) => {
         .json(summary);
 });
 
+/**
+ * @GET /statistic/pie
+ * @description get data for rendering pie chart
+ */
+router.get('/pie', async (req, res) => {
+    const principal = req.principal;
+    const expenseType = req.query.expenseType || 'expense';
+    const dateType = req.query.dateType || 'date';
+})
+
 module.exports = router;
