@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const HTTP_STATUS = require('http-status');
-const { getOverviewSummary } = require('../services/statistic/statistic.service');
+const { getOverviewSummary, getStatistic, getLineStatistic } = require('../services/statistic/statistic.service');
 
 router.use((req, res, next) => {
     next()
@@ -18,13 +18,24 @@ router.get('/summary', async (req, res) => {
 });
 
 /**
- * @GET /statistic/pie
+ * @GET /statistic/line
+ * @description get data for line chart
+ */
+router.get('/line', async (req, res) => {
+    const principal = req.principal;
+    const data = await getLineStatistic(principal, req.query);
+    res.status(HTTP_STATUS.OK)
+        .json(data);
+});
+
+/**
+ * @GET /statistic
  * @description get data for rendering pie chart
  */
-router.get('/pie', async (req, res) => {
+router.get('/', async (req, res) => {
     const principal = req.principal;
-    const expenseType = req.query.expenseType || 'expense';
-    const dateType = req.query.dateType || 'date';
-})
+    const expenses = await getStatistic(principal, req.query);
+    res.json(expenses);
+});
 
 module.exports = router;
