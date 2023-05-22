@@ -29,7 +29,7 @@ async function getCategoryById(id) {
     try {
         const category = await Category
             .findById(id)
-            .select('name icon description');
+            .select('name icon description color');
 
         return category;
     } catch (e) {
